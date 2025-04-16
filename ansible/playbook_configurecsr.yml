@@ -1,0 +1,32 @@
+- name: Acte 1 - essai csr1000
+  # On va agir sur l'hôte csr1000 dans cet acte
+  hosts: csr1000
+  # Passe l'étape permettant de récupérer des informations sur
+  #   l'hôte pour gagner du temps
+  gather_facts: false
+
+  # Liste des tâches associées à notre Acte
+  tasks:
+    - name: conf_interfaces
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: GigabitEthernet2
+            ipv4:
+              - address: 192.168.2.1/24
+          - name: GigabitEthernet3
+            ipv4:
+              - address: 192.168.3.1/24
+          - name: GigabitEthernet4
+            ipv4:
+              - address: 192.168.4.1/24
+        state: merged
+  
+    - name: conf_dhcp
+      cisco.ios.ios_config:
+        lines:
+        - no ip dhcp pool dhcppool
+        - ip dhcp pool dhcppool
+        - network 192.168.2.0 255.255.255.0
+        - default-router 192.168.2.1
+        - exit
+        - service dhcp
