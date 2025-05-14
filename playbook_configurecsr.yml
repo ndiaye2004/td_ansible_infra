@@ -8,7 +8,7 @@
     - name: conf_interfaces
       cisco.ios.ios_l3_interfaces:
         config:
-          - name: GigabitEthernet2
+          - name: GigabitEthernet1
             ipv4:
               - address: dhcp
           - name: GigabitEthernet2
