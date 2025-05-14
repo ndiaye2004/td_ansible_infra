@@ -10,6 +10,9 @@
         config:
           - name: GigabitEthernet2
             ipv4:
+              - address: dhcp
+          - name: GigabitEthernet2
+            ipv4:
               - address: 192.168.2.1/24
           - name: GigabitEthernet3
             ipv4:
