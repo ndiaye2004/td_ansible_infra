@@ -21,11 +21,13 @@
             ipv4:
               - address: 192.168.4.1/24
         state: merged
-
-    - name: conf_dhcp
+    - name: no_pool_dhcp
       cisco.ios.ios_config:
         lines:
           - no ip dhcp pool dhcppool
+    - name: conf_dhcp
+      cisco.ios.ios_config:
+        lines:
           - ip dhcp pool dhcppool
           - network 192.168.2.0 255.255.255.0
           - default-router 192.168.2.1
