@@ -1,0 +1,11 @@
+- name: PAT Port
+  hosts: csr1000
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: Configuration de PAT par port
+      cisco.ios.ios_config:
+        lines:
+          - ip nat inside source static tcp 192.168.3.2 80 interface GigabitEthernet1 80
+          - ip nat inside source static tcp 192.168.4.2 22 interface GigabitEthernet1 2222

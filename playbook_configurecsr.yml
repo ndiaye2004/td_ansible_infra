@@ -1,0 +1,67 @@
+- name: Acte 1 - essai csr1000
+  hosts: csr1000
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+
+    - name: conf_interfaces
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: GigabitEthernet2
+            ipv4:
+              - address: 192.168.2.1/24
+          - name: GigabitEthernet3
+            ipv4:
+              - address: 192.168.3.1/24
+          - name: GigabitEthernet4
+            ipv4:
+              - address: 192.168.4.1/24
+        state: merged
+
+    - name: conf_dhcp
+      cisco.ios.ios_config:
+        lines:
+          - no ip dhcp pool dhcppool
+          - ip dhcp pool dhcppool
+          - network 192.168.2.0 255.255.255.0
+          - default-router 192.168.2.1
+          - exit
+          - service dhcp
+
+    - name: Configuration interface WAN (GigabitEthernet1)
+      cisco.ios.ios_config:
+        lines:
+          - ip nat outside
+        parents: interface GigabitEthernet1
+
+    - name: Configuration interface LAN 1 (GigabitEthernet2)
+      cisco.ios.ios_config:
+        lines:
+          - ip nat inside
+        parents: interface GigabitEthernet2
+
+    - name: Configuration interface LAN 2 (GigabitEthernet3)
+      cisco.ios.ios_config:
+        lines:
+          - ip nat inside
+        parents: interface GigabitEthernet3
+
+    - name: Configuration interface LAN 3 (GigabitEthernet4)
+      cisco.ios.ios_config:
+        lines:
+          - ip nat inside
+        parents: interface GigabitEthernet4
+
+    - name: Configuration ACL NAT
+      cisco.ios.ios_config:
+        lines:
+          - access-list 10 permit 192.168.2.0 0.0.0.255
+          - access-list 10 permit 192.168.3.0 0.0.0.255
+          - access-list 10 permit 192.168.4.0 0.0.0.255
+
+    - name: Configuration NAT dynamique (PAT overload)
+      cisco.ios.ios_config:
+        lines:
+          - ip nat inside source list 10 interface GigabitEthernet1 overload
+
